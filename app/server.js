@@ -17,9 +17,9 @@ const STATE_FILE = path.join(DATA_DIR, "state.json");
 
 await fs.mkdir(DATA_DIR, { recursive: true });
 
-let songs: any[] = [];
-let currentSong: any = null;
-let nextSong: any = null;
+let songs = [];
+let currentSong = null;
+let nextSong = null;
 
 // --- Helpers: load/save files
 async function loadSongs() {
@@ -46,7 +46,11 @@ async function loadState() {
 }
 
 async function saveState() {
-  const payload = { currentSong, nextSong, updatedAt: new Date().toISOString() };
+  const payload = {
+    currentSong,
+    nextSong,
+    updatedAt: new Date().toISOString(),
+  };
   try {
     await fs.writeFile(STATE_FILE, JSON.stringify(payload, null, 2), "utf8");
   } catch (err) {
@@ -81,8 +85,9 @@ io.on("connection", (socket) => {
   // --- Set current song
   socket.on("setCurrentSong", async (payload) => {
     let song = null;
-    if (typeof payload === "number") song = songs.find(s => s.id === payload) || null;
-    else if (payload?.id) song = songs.find(s => s.id === payload.id) || null;
+    if (typeof payload === "number")
+      song = songs.find((s) => s.id === payload) || null;
+    else if (payload?.id) song = songs.find((s) => s.id === payload.id) || null;
 
     if (!song) return socket.emit("error", "Song not found");
 
@@ -94,8 +99,9 @@ io.on("connection", (socket) => {
   // --- Set next song
   socket.on("setNextSong", async (payload) => {
     let song = null;
-    if (typeof payload === "number") song = songs.find(s => s.id === payload) || null;
-    else if (payload?.id) song = songs.find(s => s.id === payload.id) || null;
+    if (typeof payload === "number")
+      song = songs.find((s) => s.id === payload) || null;
+    else if (payload?.id) song = songs.find((s) => s.id === payload.id) || null;
 
     if (!song) return socket.emit("error", "Song not found");
 
@@ -104,7 +110,9 @@ io.on("connection", (socket) => {
     io.emit("state", { songs, currentSong, nextSong });
   });
 
-  socket.on("disconnect", (reason) => console.log("Client disconnected:", socket.id, reason));
+  socket.on("disconnect", (reason) =>
+    console.log("Client disconnected:", socket.id, reason)
+  );
 });
 
 // Graceful shutdown
@@ -117,4 +125,6 @@ async function shutdown() {
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 
-server.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
+server.listen(PORT, () =>
+  console.log(`Server listening on http://localhost:${PORT}`)
+);
