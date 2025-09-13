@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "The Great Escape",
+    "author": "Joy Ride",
+    "key": "C Major",
+    "tempo": 120
+  },
+  {
+    "id": 2,
+    "name": "Ain’t No Mountain High Enough",
+    "author": "Marvin Gaye & Tammi Terrell",
+    "key": "F Major",
+    "tempo": 112
+  },
+  {
+    "id": 3,
+    "name": "On the Road Again",
+    "author": "Willie Nelson",
+    "key": "G Major",
+    "tempo": 104
+  },
+  {
+    "id": 4,
+    "name": "What a Wonderful World",
+    "author": "Louis Armstrong",
+    "key": "E♭ Major",
+    "tempo": 72
+  },
+  {
+    "id": 5,
+    "name": "Hotel California",
+    "author": "Eagles",
+    "key": "B Minor",
+    "tempo": 75
+  },
+  {
+    "id": 6,
+    "name": "Imagine",
+    "author": "John Lennon",
+    "key": "C Major",
+    "tempo": 76
+  },
+  {
+    "id": 7,
+    "name": "Let It Be",
+    "author": "The Beatles",
+    "key": "C Major",
+    "tempo": 72
+  },
+  {
+    "id": 8,
+    "name": "Bohemian Rhapsody",
+    "author": "Queen",
+    "key": "B♭ Major",
+    "tempo": 72
+  }
+]
