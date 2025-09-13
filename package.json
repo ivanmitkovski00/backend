@@ -1,4 +1,12 @@
 {
+  "name": "band-app-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",      // ! added for production
+    "dev": "nodemon server.js"      // ! optional for local dev
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
