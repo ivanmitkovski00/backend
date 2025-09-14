@@ -10,23 +10,44 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || ""; // can be a comma-separated list
 const DATA_DIR = process.env.DATA_DIR || path.resolve("./data");
 const SONGS_FILE = path.join(DATA_DIR, "songs.json");
 const STATE_FILE = path.join(DATA_DIR, "state.json");
 
+// ✅ Allow multiple origins (localhost + vercel)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://band-oy2rxxhcg-samsaramk2025-5896s-projects.vercel.app",
+  "https://your-custom-domain.com", // add if you have one
+];
+
+// --- Helpers for dynamic CORS
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn("Blocked CORS request from:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST"],
+};
+
+// --- Data setup
 await fs.mkdir(DATA_DIR, { recursive: true });
 
 let songs = [];
 let currentSong = null;
 let nextSong = null;
 
-// --- Helpers
 async function loadSongs() {
   try {
     const raw = await fs.readFile(SONGS_FILE, "utf8");
     songs = JSON.parse(raw);
   } catch {
-    console.warn("Could not load songs.json — starting empty.");
     songs = [];
   }
 }
@@ -53,43 +74,22 @@ async function saveState() {
   await fs.writeFile(STATE_FILE, JSON.stringify(payload, null, 2), "utf8");
 }
 
+// Load data
 await loadSongs();
 await loadState();
 
 const app = express();
 app.use(express.json());
+app.use(cors(corsOptions)); // ✅ dynamic CORS
 
-// --- CORS: allow local + vercel frontend
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://band-oy2rxxhcg-samsaramk2025-5896s-projects.vercel.app",
-];
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
-
-// --- REST endpoints
+// --- REST Endpoints
 app.get("/songs", (req, res) => res.json(songs));
 app.get("/state", (req, res) => res.json({ songs, currentSong, nextSong }));
 
 // --- HTTP + Socket.IO
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"],
-  },
+  cors: corsOptions, // ✅ socket.io CORS too
 });
 
 io.on("connection", (socket) => {
@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
   socket.emit("state", { songs, currentSong, nextSong });
 
   socket.on("setCurrentSong", async (id) => {
-    const song = songs.find((s) => s.id === id);
+    const song = songs.find((s) => s.id === id) || null;
     if (!song) return;
     currentSong = song;
     await saveState();
@@ -105,7 +105,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("setNextSong", async (id) => {
-    const song = songs.find((s) => s.id === id);
+    const song = songs.find((s) => s.id === id) || null;
     if (!song) return;
     nextSong = song;
     await saveState();
