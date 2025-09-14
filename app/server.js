@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
@@ -20,7 +19,7 @@ let songs = [];
 let currentSong = null;
 let nextSong = null;
 
-// --- Load songs
+// Load songs
 async function loadSongs() {
   try {
     const raw = await fs.readFile(SONGS_FILE, "utf8");
@@ -30,7 +29,7 @@ async function loadSongs() {
   }
 }
 
-// --- Load state
+// Load state
 async function loadState() {
   try {
     const raw = await fs.readFile(STATE_FILE, "utf8");
@@ -44,17 +43,13 @@ async function loadState() {
   }
 }
 
-// --- Save state
+// Save state
 async function saveState() {
-  const payload = {
-    currentSong,
-    nextSong,
-    updatedAt: new Date().toISOString(),
-  };
+  const payload = { currentSong, nextSong, updatedAt: new Date().toISOString() };
   await fs.writeFile(STATE_FILE, JSON.stringify(payload, null, 2), "utf8");
 }
 
-// --- Initialize data
+// Init
 await loadSongs();
 await loadState();
 
@@ -65,26 +60,25 @@ app.use(express.json());
 app.get("/songs", (req, res) => res.json(songs));
 app.get("/state", (req, res) => res.json({ songs, currentSong, nextSong }));
 
-// --- HTTP + Socket.IO
+// HTTP + Socket.IO
 const server = http.createServer(app);
 
+// Socket.IO with CORS for Vercel + localhost
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:5173", // dev FE
-      "http://localhost:3000", // optional dev
-      "https://bandapp-beta.vercel.app", // deployed FE
+      "http://localhost:5173",           // local dev
+      "https://bandapp-beta.vercel.app"  // production FE
     ],
     methods: ["GET", "POST"],
     credentials: true,
   },
-  transports: ["websocket"], // force websocket only
+  transports: ["websocket"]
 });
 
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
 
-  // Send initial state
   socket.emit("state", { songs, currentSong, nextSong });
 
   socket.on("setCurrentSong", async (id) => {
@@ -106,4 +100,5 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => console.log("Client disconnected:", socket.id));
 });
 
-server.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+// Start server
+server.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
