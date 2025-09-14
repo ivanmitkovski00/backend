@@ -8,11 +8,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
-const DATA_DIR = process.env.DATA_DIR || path.resolve("./data");
+const DATA_DIR = path.resolve(process.env.DATA_DIR || "./data");
 const SONGS_FILE = path.join(DATA_DIR, "songs.json");
 const STATE_FILE = path.join(DATA_DIR, "state.json");
 
-// --- Ensure data folder exists
 await fs.mkdir(DATA_DIR, { recursive: true });
 
 let songs = [];
@@ -22,8 +21,7 @@ let nextSong = null;
 // --- Load songs
 async function loadSongs() {
   try {
-    const raw = await fs.readFile(SONGS_FILE, "utf8");
-    songs = JSON.parse(raw);
+    songs = JSON.parse(await fs.readFile(SONGS_FILE, "utf8"));
   } catch {
     songs = [];
   }
@@ -32,8 +30,7 @@ async function loadSongs() {
 // --- Load state
 async function loadState() {
   try {
-    const raw = await fs.readFile(STATE_FILE, "utf8");
-    const parsed = JSON.parse(raw);
+    const parsed = JSON.parse(await fs.readFile(STATE_FILE, "utf8"));
     currentSong = parsed.currentSong ?? (songs.length ? songs[0] : null);
     nextSong = parsed.nextSong ?? null;
   } catch {
@@ -61,23 +58,29 @@ await loadState();
 const app = express();
 app.use(express.json());
 
-// --- REST endpoints
 app.get("/songs", (req, res) => res.json(songs));
 app.get("/state", (req, res) => res.json({ songs, currentSong, nextSong }));
 
 // --- HTTP + Socket.IO
 const server = http.createServer(app);
+
 const io = new Server(server, {
-  transports: ["websocket"], // force websocket only
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://band-oy2rxxhcg-samsaramk2025-5896s-projects.vercel.app",
+    ],
+    methods: ["GET", "POST"],
+  },
+  transports: ["websocket"],
 });
 
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
 
-  // Send initial state
   socket.emit("state", { songs, currentSong, nextSong });
 
-  // Set current song
   socket.on("setCurrentSong", async (id) => {
     const song = songs.find((s) => s.id === id) || null;
     if (!song) return;
@@ -86,7 +89,6 @@ io.on("connection", (socket) => {
     io.emit("state", { songs, currentSong, nextSong });
   });
 
-  // Set next song
   socket.on("setNextSong", async (id) => {
     const song = songs.find((s) => s.id === id) || null;
     if (!song) return;
