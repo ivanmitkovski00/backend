@@ -1,11 +1,11 @@
 {
   "currentSong": {
-    "id": 5,
-    "name": "Hotel California",
-    "author": "Eagles",
-    "key": "B Minor",
-    "tempo": 75
+    "id": 1,
+    "name": "The Great Escape",
+    "author": "Joy Ride",
+    "key": "C Major",
+    "tempo": 120
   },
   "nextSong": null,
-  "updatedAt": "2025-09-13T20:13:40.127Z"
+  "updatedAt": "2025-09-14T18:29:43.408Z"
 }
