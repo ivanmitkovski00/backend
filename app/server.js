@@ -2,7 +2,6 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import cors from "cors";
 import fs from "fs/promises";
 import path from "path";
 import dotenv from "dotenv";
@@ -22,19 +21,6 @@ const allowedOrigins = [
   "https://band-oy2rxxhcg-samsaramk2025-5896s-projects.vercel.app",
   "https://your-custom-domain.com", // add if you have one
 ];
-
-// --- Helpers for dynamic CORS
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn("Blocked CORS request from:", origin);
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST"],
-};
 
 // --- Data setup
 await fs.mkdir(DATA_DIR, { recursive: true });
@@ -80,7 +66,6 @@ await loadState();
 
 const app = express();
 app.use(express.json());
-app.use(cors(corsOptions)); // ✅ dynamic CORS
 
 // --- REST Endpoints
 app.get("/songs", (req, res) => res.json(songs));
@@ -88,9 +73,7 @@ app.get("/state", (req, res) => res.json({ songs, currentSong, nextSong }));
 
 // --- HTTP + Socket.IO
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: corsOptions, // ✅ socket.io CORS too
-});
+const io = new Server(server);
 
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
