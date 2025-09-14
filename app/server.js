@@ -8,29 +8,32 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
-const DATA_DIR = path.resolve(process.env.DATA_DIR || "./data");
+const DATA_DIR = process.env.DATA_DIR || path.resolve("./data");
 const SONGS_FILE = path.join(DATA_DIR, "songs.json");
 const STATE_FILE = path.join(DATA_DIR, "state.json");
 
+// Ensure data folder exists
 await fs.mkdir(DATA_DIR, { recursive: true });
 
 let songs = [];
 let currentSong = null;
 let nextSong = null;
 
-// --- Load songs
+// Load songs
 async function loadSongs() {
   try {
-    songs = JSON.parse(await fs.readFile(SONGS_FILE, "utf8"));
+    const raw = await fs.readFile(SONGS_FILE, "utf8");
+    songs = JSON.parse(raw);
   } catch {
     songs = [];
   }
 }
 
-// --- Load state
+// Load state
 async function loadState() {
   try {
-    const parsed = JSON.parse(await fs.readFile(STATE_FILE, "utf8"));
+    const raw = await fs.readFile(STATE_FILE, "utf8");
+    const parsed = JSON.parse(raw);
     currentSong = parsed.currentSong ?? (songs.length ? songs[0] : null);
     nextSong = parsed.nextSong ?? null;
   } catch {
@@ -40,7 +43,7 @@ async function loadState() {
   }
 }
 
-// --- Save state
+// Save state
 async function saveState() {
   const payload = {
     currentSong,
@@ -50,30 +53,26 @@ async function saveState() {
   await fs.writeFile(STATE_FILE, JSON.stringify(payload, null, 2), "utf8");
 }
 
-// --- Initialize data
+// Init
 await loadSongs();
 await loadState();
 
-// --- Express
 const app = express();
 app.use(express.json());
 
+// REST endpoints
 app.get("/songs", (req, res) => res.json(songs));
 app.get("/state", (req, res) => res.json({ songs, currentSong, nextSong }));
 
-// --- HTTP + Socket.IO
+// HTTP + Socket.IO
 const server = http.createServer(app);
-
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "https://band-oy2rxxhcg-samsaramk2025-5896s-projects.vercel.app",
-    ],
+    origin: process.env.CLIENT_ORIGIN.split(","), // allow multiple origins
     methods: ["GET", "POST"],
+    credentials: true,
   },
-  transports: ["websocket"],
+  transports: ["websocket"], // force websocket
 });
 
 io.on("connection", (socket) => {
