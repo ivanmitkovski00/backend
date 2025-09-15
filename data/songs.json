@@ -1,58 +1,100 @@
 [
   {
     "id": 1,
-    "name": "The Great Escape",
-    "author": "Joy Ride",
-    "key": "C Major",
+    "name": "Hot Stuff",
+    "author": "Donna Summer",
+    "key": "C Minor",
     "tempo": 120
   },
   {
     "id": 2,
-    "name": "Ain’t No Mountain High Enough",
-    "author": "Marvin Gaye & Tammi Terrell",
-    "key": "F Major",
-    "tempo": 112
+    "name": "Gimme! Gimme! Gimme!",
+    "author": "ABBA",
+    "key": "A Minor",
+    "tempo": 120
   },
   {
     "id": 3,
-    "name": "On the Road Again",
-    "author": "Willie Nelson",
+    "name": "Easy",
+    "author": "Lionel Richie",
     "key": "G Major",
-    "tempo": 104
+    "tempo": 72
   },
   {
     "id": 4,
-    "name": "What a Wonderful World",
-    "author": "Louis Armstrong",
-    "key": "E♭ Major",
-    "tempo": 72
+    "name": "It's My Life",
+    "author": "Bon Jovi",
+    "key": "C Minor",
+    "tempo": 120
   },
   {
     "id": 5,
-    "name": "Hotel California",
-    "author": "Eagles",
+    "name": "Ain't Nobody",
+    "author": "Chaka Khan",
     "key": "B Minor",
-    "tempo": 75
+    "tempo": 104
   },
   {
     "id": 6,
-    "name": "Imagine",
-    "author": "John Lennon",
-    "key": "C Major",
-    "tempo": 76
+    "name": "Smooth Operator",
+    "author": "Sade",
+    "key": "A Minor",
+    "tempo": 116
   },
   {
     "id": 7,
-    "name": "Let It Be",
-    "author": "The Beatles",
-    "key": "C Major",
-    "tempo": 72
+    "name": "Činim Pravu Stvar",
+    "author": "Gibonni",
+    "key": "G Major",
+    "tempo": 102
   },
   {
     "id": 8,
-    "name": "Bohemian Rhapsody",
-    "author": "Queen",
-    "key": "B♭ Major",
-    "tempo": 72
+    "name": "Vjerujem u nas",
+    "author": "Adil Šoše",
+    "key": "A Minor",
+    "tempo": 132
+  },
+  {
+    "id": 9,
+    "name": "Minus i Plus",
+    "author": "Magazin",
+    "key": "A Minor",
+    "tempo": 118
+  },
+  {
+    "id": 10,
+    "name": "Pjevam danju, pjevam noću",
+    "author": "Zdravko Čolič",
+    "key": "A Minor",
+    "tempo": 134
+  },
+  {
+    "id": 11,
+    "name": "Nešto lijepo treba da se desi",
+    "author": "Dino Merlin",
+    "key": "G Minor",
+    "tempo": 204
+  },
+  {
+    "id": 12,
+    "name": "Bosnom Behar Probeharao",
+    "author": "Dino Merlin",
+    "key": "G Minor",
+    "tempo": 136
+  },
+  {
+    "id": 13,
+    "name": "Nokjna Kralica",
+    "author": "Erzana",
+    "key": "A Minor",
+    "tempo": 100
+  },
+  {
+    "id": 14,
+    "name": "Nekade posle 2",
+    "author": "Elvic Mekič",
+    "key": "D Minor",
+    "tempo": 110
   }
 ]
